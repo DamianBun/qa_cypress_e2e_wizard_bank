@@ -82,6 +82,11 @@ describe('Bank app', () => {
       .should('be.visible');
     cy.contains('button', 'Transactions')
       .click();
+    cy.get('.table').should('not.contain', 'Debit');
+    cy.get('.table').should('not.contain', 'Credit');
+    cy.contains('button', 'Back')
+      .click();
+    cy.contains('button', 'Logout').should('be.visible');
     cy.contains('button', 'Logout')
       .click();
     cy.contains('div', 'Your Name')
