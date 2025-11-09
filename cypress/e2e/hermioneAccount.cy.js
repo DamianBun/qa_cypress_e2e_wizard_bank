@@ -1,10 +1,20 @@
 /// <reference types='cypress' />
 
+import {
+  faker
+} from '@faker-js/faker';
+
 describe('Bank app', () => {
-  const amountDeposit = Math.random().toString().slice(2, 5);
+  const amountDeposit = faker.number.int({
+    min: 50,
+    max: 500
+  });
   const balance = 5096;
-  const balanceAfterDeposit = balance + Number(amountDeposit);
-  const withdrawl = Math.random().toString().slice(2, 4);
+  const balanceAfterDeposit = balance + amountDeposit;
+  const withdrawl = faker.number.int({
+    min: 1,
+    max: amountDeposit
+  });
   const balanceAfterWithdraw = balanceAfterDeposit - withdrawl;
 
   before(() => {
@@ -57,13 +67,13 @@ describe('Bank app', () => {
       .should('be.visible');
     cy.contains('button', 'Transactions')
       .click();
-    cy.contains('a', 'Date-Time');
-    cy.contains('a', 'Amount');
-    cy.contains('a', 'Transaction Type');
-    cy.get('.table')
-      .each((el) => {
-        cy.wrap(el).should('not.be.empty');
-      });
+    cy.get('#start').clear();
+    cy.get('#start').type('2025-11-08T00:01');
+    cy.get('[id*="anchor"]').should('be.visible');
+    cy.get('[ng-repeat*="tx in transactions"]')
+      .last().find('td').should('contain', withdrawl);
+    cy.get('[ng-repeat*="tx in transactions"]')
+      .eq('-2').find('td').should('contain', amountDeposit);
     cy.contains('button', 'Back')
       .click();
     cy.get('[id="accountSelect"]')
